@@ -2,26 +2,38 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define prototypeFileName "prototype.txt"
+#define prototypeFileName "../prototype.txt"
+#define Success 1
+#define Fail 0
 
 char buffer[255];
 
 int ScriptMakefile( void ){
+    int returnValue = Fail;
     FILE* pPrototype = NULL;
     FILE* pMakeFile = NULL;
     
-    char libName[30];
+    char* libname;
     char* headerName[255];
+    char* tempPtr;
     
-    if ( fopen(prototypeFileName,"r") == NULL ){
-        perror("cannot find prototype file\n");
-        exit(1);
+    if ( ( pPrototype = fopen(prototypeFileName,"r") ) == NULL ){
+        perror("cannot find prototype file");
     }
-    
-    memset(buffer,"\0",sizeof(buffer)*sizeof(char));
-    
-    while(fgets(buffer,pPrototype)){
+    else{
+        //initialize buffer
+        memset(buffer,0,sizeof(buffer)*sizeof(char));
+        
+        //read string from file
+        while(fgets(buffer,(int)sizeof(buffer),pPrototype)){
+            printf("%s",buffer);
+        }
         
     }
-    
+    return returnValue;
+}
+
+int main( void ){
+    ScriptMakefile();
+    return 0;
 }
