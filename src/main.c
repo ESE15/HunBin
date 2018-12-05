@@ -6,12 +6,26 @@
 
 int main(int argc, char *argv[]){
 
-
+	extern char *optarg;
+	extern int optind;
+	int num;
 	// arg parsing
+	while( (num = getopt(argc, argv, "o:d:")) != -1){
+		// -1 means getopt() parsed all options
+		switch (num){
+			case 'o':
+				// fopen name by after -o
+				break;
+			case 'd':
+				// do search
+				SearchDependencies(optarg);
+				break;
+			case '?':
+				printf("Unknown Parameter : %c\n", optopt);
+				break;
+		}
+	}
 
-
-	// do search
-	SearchDependencies(
 
 	// do script
 	// YB's code here
