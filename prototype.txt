@@ -1,0 +1,1 @@
+libfuncs.a:func1,func2
