@@ -10,10 +10,12 @@ char buffer[255];
 
 int ScriptMakefile( void ){
     int returnValue = Fail;
+    int headerNameIndex = 0;
+    
     FILE* pPrototype = NULL;
     FILE* pMakeFile = NULL;
     
-    char* libname;
+    char* libName;
     char* headerName[255];
     char* tempPtr;
     
@@ -26,9 +28,14 @@ int ScriptMakefile( void ){
         
         //read string from file
         while(fgets(buffer,(int)sizeof(buffer),pPrototype)){
-            printf("%s",buffer);
+            tempPtr = buffer;
+            strtok(tempPtr,":");
+            libName = tempPtr;
+            while( (tempPtr = strtok(NULL,",")) != NULL ){
+                headerName[headerNameIndex++] = tempPtr;
+            }
         }
-        
+        printf("%s %s %s\n",libName,headerName[0],headerName[1]);
     }
     return returnValue;
 }
