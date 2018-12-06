@@ -32,10 +32,10 @@ int SearchDependencies(char *dir){
 		printf(" JH_SEARCH.c 's 32 Line \n");
 		printf(" now directory is %s \n",dir);
 		fileStat = stat(dp->d_name, &statBuffer);
-		if(fileStat==-1){
-			perror("stat");
-			exit(0);
-		}
+		//if(fileStat==-1){
+		//	perror("stat");
+		//	exit(0);
+		//}
 		//if( (statBuffer.st_mode & S_IFMT) == S_IFREG){
 		//}
 		if( (statBuffer.st_mode & S_IFMT) == S_IFDIR){
@@ -47,10 +47,12 @@ int SearchDependencies(char *dir){
 				printf("%s \n",dp->d_name);
 			} 
 			else if (strcmp(dp->d_name, "lib") == 0) { // found lib directory
+				printf("%s \n",dp->d_name);
 				// do some
 			} 
 			else if (strcmp(dp->d_name, "src") == 0){ // found src directory
 				// do some
+				printf("%s\n",dp->d_name);
 			}
 		}
 		//else if( (statBuffer.st_mode & S_IFMT) == S_IFLNK){
