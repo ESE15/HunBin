@@ -3,13 +3,15 @@
 #include <string.h>
 
 #define prototypeFileName "../prototype.txt"
-#define Success 1
-#define Fail 0
+#define MakeFileName "../Makefile"
+#define SUCCESS 1
+#define FAIL 0
 
 char buffer[255];
 
+
 int ScriptMakefile( void ){
-    int returnValue = Fail;
+    int returnValue = FAIL;
     int headerNameIndex = 0;
     
     FILE* pPrototype = NULL;
@@ -35,7 +37,12 @@ int ScriptMakefile( void ){
                 headerName[headerNameIndex++] = tempPtr;
             }
         }
-        printf("%s %s %s\n",libName,headerName[0],headerName[1]);
+        
+        if ( ( pMakeFile = fopen(MakeFileName,"w") ) == NULL ){
+            perror("cannot create make file");
+        }
+        
+        //printf("%s %s %s\n",libName,headerName[0],headerName[1]);
     }
     return returnValue;
 }
