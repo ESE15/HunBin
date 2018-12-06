@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "JH_SEARCH.h"
-#include "YB_SCRIPT.h"
+//#include "YB_SCRIPT.h"
 
 int main(int argc, char *argv[]){
 
@@ -19,6 +19,7 @@ int main(int argc, char *argv[]){
 			case 'd':
 				// do search
 				SearchDependencies(optarg);
+				printf("main : optarg = %s \n",optarg);
 				break;
 			case '?':
 				printf("Unknown Parameter : %c\n", optopt);

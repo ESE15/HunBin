@@ -25,10 +25,12 @@ int SearchDependencies(char *dir){
 	}
 
 	// read Directory ( Porject directory)
-	while(dp = readdir(dirp)){
+	while((dp = readdir(dirPointer))!= NULL){
 		if(dp==NULL){
 			break;
 		}
+		printf(" JH_SEARCH.c 's 32 Line \n");
+		printf(" now directory is %s \n",dir);
 		fileStat = stat(dp->d_name, &statBuffer);
 		if(fileStat==-1){
 			perror("stat");
@@ -41,6 +43,8 @@ int SearchDependencies(char *dir){
 			// and search(cat) files for extracting header
 			if(strcmp(dp->d_name, "include") == 0){ // found include directory
 				// do some
+				//SearchInclude(dp->d_name);
+				printf("%s \n",dp->d_name);
 			} 
 			else if (strcmp(dp->d_name, "lib") == 0) { // found lib directory
 				// do some
@@ -54,4 +58,7 @@ int SearchDependencies(char *dir){
 	}
 
 	// return status  0: error , 1 : done
+	return 1;
 }
+
+
