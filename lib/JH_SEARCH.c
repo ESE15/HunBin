@@ -38,9 +38,16 @@ int SearchDependencies(char *dir){
 		//}
 		if( (statBuffer.st_mode & S_IFMT) == S_IFDIR){
 			// check if there are reserved directories
-			if(strcmp(dp->d_name, "include")== 0){
+			// and search(cat) files for extracting header
+			if(strcmp(dp->d_name, "include") == 0){ // found include directory
+				// do some
+			} 
+			else if (strcmp(dp->d_name, "lib") == 0) { // found lib directory
+				// do some
+			} 
+			else if (strcmp(dp->d_name, "src") == 0){ // found src directory
+				// do some
 			}
-			else if {} // ...
 		}
 		//else if( (statBuffer.st_mode & S_IFMT) == S_IFLNK){
 		//}
