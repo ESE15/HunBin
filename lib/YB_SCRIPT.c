@@ -41,6 +41,7 @@ int ScriptMakefile( void ){
         if ( ( pMakeFile = fopen(MakeFileName,"w") ) == NULL ){
             perror("cannot create make file");
         }
+        //fputs func here
         
         //printf("%s %s %s\n",libName,headerName[0],headerName[1]);
     }
