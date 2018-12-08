@@ -6,6 +6,7 @@
 
 #define prototypeFileName "../prototype.txt"
 #define MakeFileName "Makefile"
+#define MainMakeFileName "../src/Makefile"
 #define SUCCESS 1
 #define FAIL 0
 
@@ -19,11 +20,17 @@ int ScriptMakefile( void ){
     
     FILE* pPrototype = NULL;
     FILE* pMakeFile = NULL;
+    FILE* pMainMakeFile = NULL;
     
     char* libName;
     char* headerName[255];
     char* tempPtr;
     char libNameMacroTmp[255];
+    
+    if ( ( pMainMakeFile = fopen(MainMakeFileName,"w") ) == NULL ){
+        perror("cannot create Main Makefile");
+    }
+    fputs("CC=gcc\nCFLAGS=-Wall\nINCLUDE=-I../include\nLIB=-L../lib",pMainMakeFile);
     
     if ( ( pMakeFile = fopen(MakeFileName,"w") ) == NULL ){
         perror("cannot create Makefile");
@@ -62,6 +69,10 @@ int ScriptMakefile( void ){
         
         //printf("%s %s %s\n",libName,headerName[0],headerName[1]);
     }
+    
+    
+    
+    
     fclose(pPrototype);
     fclose(pMakeFile);
     return returnValue;
