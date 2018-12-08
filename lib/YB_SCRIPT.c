@@ -13,10 +13,10 @@
 char buffer[255];
 
 
+
 int ScriptMakefile( void ){
     int returnValue = FAIL;
     int headerNameIndex = 0;
-    int libNameMacroIndex = 0;
     
     FILE* pPrototype = NULL;
     FILE* pMakeFile = NULL;
@@ -30,7 +30,7 @@ int ScriptMakefile( void ){
     if ( ( pMainMakeFile = fopen(MainMakeFileName,"w") ) == NULL ){
         perror("cannot create Main Makefile");
     }
-    fputs("CC=gcc\nCFLAGS=-Wall\nINCLUDE=-I../include\nLIB=-L../lib",pMainMakeFile);
+    fputs("CC=gcc\nCFLAGS=-Wall\nINCLUDE=-I../include\nLIB=-L../lib\nOBJS=main.o\nOUTPUT=main\n",pMainMakeFile); // need modyfing
     
     if ( ( pMakeFile = fopen(MakeFileName,"w") ) == NULL ){
         perror("cannot create Makefile");
@@ -50,11 +50,18 @@ int ScriptMakefile( void ){
             tempPtr = buffer;
             strtok(tempPtr,":");
             libName = tempPtr;
+
+            //
             sprintf(libNameMacroTmp,"OUTPUT=%s\n",libName);
             fputs(libNameMacroTmp,pMakeFile);
             
+            tempPtr = strtok(libName,".");
+            sprintf(libNameMacroTmp,"LIBNAME=-l%s\n",&tempPtr[3]);
+            fputs(libNameMacroTmp,pMainMakeFile);
+            
+            //
             tempPtr = strtok(NULL,":");
-            sprintf(libNameMacroTmp,"OBJS=%s\n",tempPtr);
+            sprintf(libNameMacroTmp,"OBJS=JH_SEARCH.o\n"); // need modfiying
             fputs(libNameMacroTmp,pMakeFile);
             
             fputs("INCLUDE=-I../include\nall : $(OBJS) $(OUTPUT)\n",pMakeFile);
