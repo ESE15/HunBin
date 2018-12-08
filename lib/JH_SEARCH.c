@@ -43,15 +43,15 @@ int SearchDependencies(char *dir){
 			// and search(cat) files for extracting header
 			if(strcmp(dp->d_name, "include") == 0){ // found include directory
 				// do some
-				searchSubDir(get_current_dir_name(), 'i');
+				searchSubDir((char *)get_current_dir_name(), 'i');
 			} 
 			else if (strcmp(dp->d_name, "lib") == 0) { // found lib directory
 				// do some
-				searchSubDir(get_current_dir_name(), 'l');
+				searchSubDir((char *)get_current_dir_name(), 'l');
 			} 
 			else if (strcmp(dp->d_name, "src") == 0){ // found src directory
 				// do some
-				searchSubDir(get_current_dir_name(), 's');
+				searchSubDir((char *)get_current_dir_name(), 's');
 			}
 		}
 	}
@@ -68,20 +68,22 @@ int searchSubDir(char *dir, char subPath){
 	switch(subPath){
 		case 'i':
 			printf("Searching include directory! \n");
-			printf("%s\n", strcat(curDir, "/include"));
+			strcat(curDir, "/include");
 			status =1;
 			break;
 		case 'l':
 			printf("Searching library directory! \n");
-			printf("%s\n", strcat(curDir, "/lib"));
+			strcat(curDir, "/lib");
 			status =2;
 			break;
 		case 's':
 			printf("Searching source  directory! \n");
-			printf("%s\n", strcat(curDir, "/src"));
+			strcat(curDir, "/src");
 			status =3;
 			break;
 	}
+
+	//hint : cat JH_SEARCH.c | grep ".h\""
 
 	return 0;
 }
