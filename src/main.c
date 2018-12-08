@@ -18,7 +18,7 @@ int main(int argc, char *argv[]){
 				break;
 			case 'd':
 				// do search
-				SearchDependencies(optarg);
+				SearchDependencies(optarg, 0);
 				printf("main : optarg = %s \n",optarg);
 				break;
 			case '?':
