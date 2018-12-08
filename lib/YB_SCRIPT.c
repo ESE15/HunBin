@@ -5,7 +5,7 @@
 
 
 #define prototypeFileName "../prototype.txt"
-#define MakeFileName "../Makefile"
+#define MakeFileName "Makefile"
 #define SUCCESS 1
 #define FAIL 0
 
@@ -51,7 +51,9 @@ int ScriptMakefile( void ){
             fputs(libNameMacroTmp,pMakeFile);
             
             fputs("INCLUDE=-I../include\nall : $(OBJS) $(OUTPUT)\n",pMakeFile);
-            
+            fputs("$(OUTPUT): $(OBJS)\n\tar rv $(OUTPUT) $(OBJS)\n",pMakeFile);
+            fputs("%.o: %.c ../include/%.h\n\t$(CC) -c $(CFLAGS) $< $(INCLUDE) -o $@\n",pMakeFile);
+            fputs("clean:\n\trm -f $(OBJS) $(OUTPUT)",pMakeFile);
             while( (tempPtr = strtok(NULL,",")) != NULL ){
                 headerName[headerNameIndex] = tempPtr;
                 headerNameIndex++;
