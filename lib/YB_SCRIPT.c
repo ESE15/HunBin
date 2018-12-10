@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+//#include "YB_SCRIPT.h"
 
 #define aFileName "libmyfunc.a"
 #define prototypeFileName "../prototype.txt"
@@ -37,7 +37,7 @@ int ScriptMakefile( void ){
     if ( ( pMakeFile = fopen(MakeFileName,"w") ) == NULL ){
         perror("cannot create Makefile");
     }
-
+    
     if ( ( pPrototype = fopen(prototypeFileName,"r") ) == NULL ){
         perror("cannot find prototype file");
     }
@@ -59,14 +59,14 @@ int ScriptMakefile( void ){
             }
         }
     }
-        /* script lib Makefile*/
+    /* script lib Makefile*/
     fputs("CC=gcc\nCFLAGS=-Wall\nOUTPUT=libmyfunc.a\nINCLUDE=-I../include\n",pMakeFile);
     fputs("OBJS ~~~~\n",pMakeFile);
     fputs("$(OUTPUT): $(OBJS)\n\tar rv $(OUTPUT) $(OBJS)\n\n",pMakeFile);
     fputs("%.o: %.c ../include/%.h\n\t$(CC) -c $(CFLAGS) $< $(INCLUDE) -o $@\n\n",pMakeFile);
     fputs("clean:\n\trm -f $(OBJS) $(OUTPUT)\n",pMakeFile);
     
-    
+    fputs("CC=gcc\nINCLUDE=-I../include\nLIB=-L../lib\nLIBNAME=-lhunbin\nOBJS=main.o\nOUTPUT=main\nCFLAGS=-Wall\n\nall : $(OUTPUT)\n\n$(OUTPUT): $(OBJS)\n\t$(CC) -o $(OUTPUT) $(OBJS) $(LIB) $(LIBNAME)",pMainMakeFile);
     
     fclose(pPrototype);
     fclose(pMakeFile);
