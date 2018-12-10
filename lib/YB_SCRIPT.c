@@ -3,7 +3,7 @@
 #include <string.h>
 
 
-
+#define aFileName "libmyfunc.a"
 #define prototypeFileName "../prototype.txt"
 #define MakeFileName "Makefile"
 #define MainMakeFileName "../src/Makefile"
@@ -17,27 +17,27 @@ char buffer[255];
 int ScriptMakefile( void ){
     int returnValue = FAIL;
     int headerNameIndex = 0;
+    int cFileNameIndex = 0;
     
     FILE* pPrototype = NULL;
     FILE* pMakeFile = NULL;
     FILE* pMainMakeFile = NULL;
     
+    char* path;
     char* libName;
     char* headerName[255];
+    char* cFileName[255];
     char* tempPtr;
     char libNameMacroTmp[255];
     
     if ( ( pMainMakeFile = fopen(MainMakeFileName,"w") ) == NULL ){
         perror("cannot create Main Makefile");
     }
-    fputs("CC=gcc\nCFLAGS=-Wall\nINCLUDE=-I../include\nLIB=-L../lib\nOBJS=main.o\nOUTPUT=main\n",pMainMakeFile); // need modyfing
     
     if ( ( pMakeFile = fopen(MakeFileName,"w") ) == NULL ){
         perror("cannot create Makefile");
     }
-    
-    fputs("CC=gcc\nCFLAGS=-Wall\n",pMakeFile);
-    
+
     if ( ( pPrototype = fopen(prototypeFileName,"r") ) == NULL ){
         perror("cannot find prototype file");
     }
@@ -48,40 +48,29 @@ int ScriptMakefile( void ){
         //read string from file
         while(fgets(buffer,(int)sizeof(buffer),pPrototype)){
             tempPtr = buffer;
-            strtok(tempPtr,":");
-            libName = tempPtr;
-
-            //
-            sprintf(libNameMacroTmp,"OUTPUT=%s\n",libName);
-            fputs(libNameMacroTmp,pMakeFile);
+            strtok(tempPtr,",");
+            path = tempPtr;
             
-            tempPtr = strtok(libName,".");
-            sprintf(libNameMacroTmp,"LIBNAME=-l%s\n",&tempPtr[3]);
-            fputs(libNameMacroTmp,pMainMakeFile);
-            
-            //
-            tempPtr = strtok(NULL,":");
-            sprintf(libNameMacroTmp,"OBJS=JH_SEARCH.o\n"); // need modfiying
-            fputs(libNameMacroTmp,pMakeFile);
-            
-            fputs("INCLUDE=-I../include\nall : $(OBJS) $(OUTPUT)\n",pMakeFile);
-            fputs("$(OUTPUT): $(OBJS)\n\tar rv $(OUTPUT) $(OBJS)\n",pMakeFile);
-            fputs("%.o: %.c ../include/%.h\n\t$(CC) -c $(CFLAGS) $< $(INCLUDE) -o $@\n",pMakeFile);
-            fputs("clean:\n\trm -f $(OBJS) $(OUTPUT)",pMakeFile);
+            tempPtr = strtok(NULL,",");
+            cFileName[cFileNameIndex] = tempPtr;
             while( (tempPtr = strtok(NULL,",")) != NULL ){
                 headerName[headerNameIndex] = tempPtr;
                 headerNameIndex++;
             }
         }
-        
-        //printf("%s %s %s\n",libName,headerName[0],headerName[1]);
     }
-    
+        /* script lib Makefile*/
+    fputs("CC=gcc\nCFLAGS=-Wall\nOUTPUT=libmyfunc.a\nINCLUDE=-I../include\n",pMakeFile);
+    fputs("OBJS ~~~~\n",pMakeFile);
+    fputs("$(OUTPUT): $(OBJS)\n\tar rv $(OUTPUT) $(OBJS)\n\n",pMakeFile);
+    fputs("%.o: %.c ../include/%.h\n\t$(CC) -c $(CFLAGS) $< $(INCLUDE) -o $@\n\n",pMakeFile);
+    fputs("clean:\n\trm -f $(OBJS) $(OUTPUT)\n",pMakeFile);
     
     
     
     fclose(pPrototype);
     fclose(pMakeFile);
+    fclose(pMainMakeFile);
     return returnValue;
 }
 
