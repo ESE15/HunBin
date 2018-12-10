@@ -63,14 +63,17 @@ int SearchDependencies(char *dir){
 
 int searchSubDir(char *dir, char subPath){
 	int status;
+	int fileStat;
+	int change_dir;
+	int prjFd;
+	int sourceFSize;
 	char *prjDir= dir;
+	char *fileBuffer;
 	char curDir[255]={0, };
-	int prjFd, subFd;
+	FILE *sourceFp;
 	DIR *dirPointer;
     struct dirent *dp;
     struct stat statBuffer;
-    int fileStat;
-    int change_dir;
 
 
 	prjFd = open(prjDir, O_WRONLY|O_APPEND|O_CREAT, 0666);
@@ -111,6 +114,14 @@ int searchSubDir(char *dir, char subPath){
 			fileStat = stat(dp->d_name, &statBuffer);
 			if( (statBuffer.st_mode & S_IFMT) == S_IFREG){
 				if( strstr(dp->d_name, ".c") != NULL ){ // found source file
+					sourceFp = fopen(dp->d_name, "r");
+					fseek(sourceFp, 0, SEEK_END);
+					sourceFSize = ftell(sourceFp);
+					fileBuffer = (char *)malloc(sourceFSize+1);
+					memset(fileBuffer, 0, sourceFSize+1);
+					fseek(sourceFp, 0, SEEK_SET);
+					fread(fileBuffer, sourceFSize, 1,sourceFp);
+					printf("%s\n", fileBuffer);
 				}
 			}
 
