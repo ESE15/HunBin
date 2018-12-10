@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include "JH_SEARCH.h"
 
 
@@ -32,7 +33,7 @@ int SearchDependencies(char *dir){
 		if(dp==NULL){
 			break;
 		}
-
+		change_dir = chdir(dir);
 		fileStat = stat(dp->d_name, &statBuffer);
 		if(fileStat==-1){
 			perror("stat");
@@ -62,9 +63,19 @@ int SearchDependencies(char *dir){
 
 int searchSubDir(char *dir, char subPath){
 	int status;
+	char *prjDir= dir;
 	char curDir[255]={0, };
-	strcat(curDir, dir);
+	int prjFd, subFd;
+	DIR *dirPointer;
+    struct dirent *dp;
+    struct stat statBuffer;
+    int fileStat;
+    int change_dir;
 
+
+	prjFd = open(prjDir, O_WRONLY|O_APPEND|O_CREAT, 0666);
+	strcat(curDir, dir);
+	
 	switch(subPath){
 		case 'i':
 			printf("Searching include directory! \n");
@@ -85,6 +96,30 @@ int searchSubDir(char *dir, char subPath){
 
 	//hint : cat JH_SEARCH.c | grep ".h\""
 
+	if(status==2){ //  lib directory
+		dirPointer = opendir(curDir);
+		if(dirPointer == NULL){
+			perror("opendir");
+			exit(0);
+		}
+		change_dir = chdir(curDir);
+		
+		while( dp = readdir(dirPointer)){
+			if(dp == NULL){
+				break;
+			}
+			fileStat = stat(dp->d_name, &statBuffer);
+			if( (statBuffer.st_mode & S_IFMT) == S_IFREG){
+				if( strstr(dp->d_name, ".c") != NULL ){ // found source file
+				}
+			}
+
+		}
+
+	} 
+	else if(status==3){ // src directory
+	}
+
 	return 0;
 }
 
@@ -94,7 +129,7 @@ int strFromStr(char *destStr, char *originStr, char * startStr, char *endStr, in
 	int len = strlen(originStr), len2 = strlen(startStr);
 	int i, j;
 
-	for(i = startIdx, j=0; i<Len, i++){
+	for(i = startIdx, j=0; i<len; i++){
 		if(originStr[i] == startStr[j]){
 			j++;
 			if(j==len2){
