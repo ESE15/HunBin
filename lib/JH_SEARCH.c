@@ -87,3 +87,52 @@ int searchSubDir(char *dir, char subPath){
 
 	return 0;
 }
+
+int strFromStr(char *destStr, char *originStr, char * startStr, char *endStr, int startIdx){
+
+	int temp=0, temp2=0;
+	int len = strlen(originStr), len2 = strlen(startStr);
+	int i, j;
+
+	for(i = startIdx, j=0; i<Len, i++){
+		if(originStr[i] == startStr[j]){
+			j++;
+			if(j==len2){
+				temp= i+1;
+				break;
+			}
+		}
+		else{
+			j=0;
+		}
+	}
+
+	if(temp==0){
+		return 0;
+	}
+	len = strlen(originStr);
+	len2 = strlen(endStr);
+
+	for(i=startIdx, j=0; i<len; i++){
+		if(originStr[i] == endStr[j]){
+			j++;
+			if(j==len2){
+				temp2 = i-len2;
+				break;
+			}
+		}
+		else{
+			j=0;
+		}
+	}
+	if(temp2==0){
+		return 0;
+	}
+
+	for(i=temp;i<=temp2;i++){
+		destStr[i-temp] = originStr[i];
+	}
+	destStr[i-temp] = '\0';
+
+	return 1;
+}
