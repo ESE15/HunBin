@@ -121,7 +121,10 @@ int searchSubDir(char *dir, char subPath){
 					memset(fileBuffer, 0, sourceFSize+1);
 					fseek(sourceFp, 0, SEEK_SET);
 					fread(fileBuffer, sourceFSize, 1,sourceFp);
-					printf("%s\n", fileBuffer);
+					
+					// parse headers
+
+
 				}
 			}
 
@@ -132,6 +135,29 @@ int searchSubDir(char *dir, char subPath){
 	}
 
 	return 0;
+}
+
+void delDelimiters(char *originStr, char *toReplace, int startIdx, int endIdx){
+	int len=strlen(originStr), len2=strlen(toReplace);
+	int i,j;
+
+	for(i=startIdx; i<=endIdx; i++){
+		for(j=0; j<len2; j++){
+			if(originStr[i]==toReplace[j]){
+				originStr[i]=-5;
+			}
+		}
+	}
+	for(i=endIdx; i>=startIdx; i--){
+		if(originStr[i]==-5){
+			for(j=i;j<len;j++){
+				originStr[j]=originStr[j+1];
+			}
+			len--;
+		}
+	}
+
+	return;
 }
 
 int strFromStr(char *destStr, char *originStr, char * startStr, char *endStr, int startIdx){
