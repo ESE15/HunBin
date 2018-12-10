@@ -1,1 +1,1 @@
-libfuncs.a:func1,func2
+libhunbin.a:test.o:func1,func2
