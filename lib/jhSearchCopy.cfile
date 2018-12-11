@@ -66,7 +66,12 @@ int searchSubDir(char *dir, char subPath){
 	int fileStat;
 	int change_dir;
 	int prjFd;
+	int sourceFSize;
+	volatile int searchIdx=0;
+	volatile int finIdx;
 	int isCustomHeader;
+	char *prjDir= dir;
+	char *fileBuffer;
 	char curDir[255]={0, };
 	char fName[255]={0, };
 	char fNameSpace[255]={0, };
@@ -115,38 +120,42 @@ int searchSubDir(char *dir, char subPath){
 			if( (statBuffer.st_mode & S_IFMT) == S_IFREG){
 				if( strstr(dp->d_name, ".c") != NULL ){ // found source file
 
-					//write(prjFd, curDir, strlen(curDir));
-					if(status==2){
-						write(prjFd, "src",strlen("src"));
-					}
-					else{
-						write(prjFd, "lib",strlen("lib"));
-					}
+					write(prjFd, curDir, strlen(curDir));
 					write(prjFd, ", ",strlen(", "));
 					write(prjFd, dp->d_name, strlen(dp->d_name));
 
 					sourceFp = fopen(dp->d_name, "r");
+					fseek(sourceFp, 0, SEEK_END);
+					sourceFSize = ftell(sourceFp);
+					fileBuffer = (char *)malloc(sourceFSize+1);
+					memset(fileBuffer, 0, sourceFSize+1);
+					fseek(sourceFp, 0, SEEK_SET);
+					fread(fileBuffer, sourceFSize, 1,sourceFp);
+					delDelimiters(fileBuffer," <>", 0, sourceFSize);
 					// parse headers
-					if( sourceFp != NULL){
-
-						while( !feof( sourceFp)){
-							memset(fNameSpace, 0, 255);
-							memset(fName, 0,255);
-							fgets( fNameSpace, sizeof(fNameSpace), sourceFp);
-							if( strstr(fNameSpace, "#include") != NULL){
-								isCustomHeader = strFromStr(fName, fNameSpace, "\"", "h\"",0);
-								if( isCustomHeader != 0){
-									printf("%sh\n",fName);
-
-									write(prjFd, ", ",strlen(", "));
-									write(prjFd, fName, strlen(fName));
-									write(prjFd, "h", strlen("h"));
-								}
-							}
+					searchIdx = 0;
+					while(1){
+						memset(fNameSpace , 0 , 255);
+						memset(fName, 0 , 255);
+						/*finIdx = strFromStr(fNameSpace, fileBuffer, "#include", "h\"", searchIdx);
+						searchIdx=finIdx;
+						if(searchIdx ==0){ // finished
+							break;
 						}
-						fclose(sourceFp);
+						else{ // found something (header)
+							strcat(fNameSpace, "h\"");
+							isCustomHeader = strFromStr(fName, fNameSpace, "\"","h\"",0);
+//							delDelimiters(fName, " \"", 0, strlen(fName));
+							if(isCustomHeader != 0){
+								write(prjFd, fName, strlen(fName));
+								write(prjFd, "h, ", strlen("h"));
+								printf("%sh\n", fName);
+							}
+						}*/
+
 					}
-					write(prjFd, "\n", strlen("\n"));
+
+					write(prjFd, "\n ", strlen("\n "));
 
 				}
 			}
