@@ -115,14 +115,14 @@ int searchSubDir(char *dir, char subPath){
 			if( (statBuffer.st_mode & S_IFMT) == S_IFREG){
 				if( strstr(dp->d_name, ".c") != NULL ){ // found source file
 
-					//write(prjFd, curDir, strlen(curDir));
-					if(status==2){
-						write(prjFd, "src",strlen("src"));
-					}
-					else{
-						write(prjFd, "lib",strlen("lib"));
-					}
-					write(prjFd, ", ",strlen(", "));
+					write(prjFd, curDir, strlen(curDir));
+					//if(status==2){
+					//	write(prjFd, "src",strlen("src"));
+					//}
+					//else{
+					//	write(prjFd, "lib",strlen("lib"));
+					//}
+					write(prjFd, ",",strlen(","));
 					write(prjFd, dp->d_name, strlen(dp->d_name));
 
 					sourceFp = fopen(dp->d_name, "r");
@@ -138,7 +138,7 @@ int searchSubDir(char *dir, char subPath){
 								if( isCustomHeader != 0){
 									printf("%sh\n",fName);
 
-									write(prjFd, ", ",strlen(", "));
+									write(prjFd, ",",strlen(","));
 									write(prjFd, fName, strlen(fName));
 									write(prjFd, "h", strlen("h"));
 								}
