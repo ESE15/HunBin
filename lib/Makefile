@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-Wall
 OUTPUT=libhunbin.a
-OBJS=JH_SEARCH.o
+OBJS=JH_SEARCH.o YB_SCRIPT.o
 INCLUDE=-I../include
 
 all : $(OBJS) $(OUTPUT)

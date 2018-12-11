@@ -3,7 +3,7 @@ INCLUDE=-I../include
 LIB=-L../lib
 LIBNAME=-lhunbin
 OBJS=main.o
-OUTPUT=main
+OUTPUT=HBmake
 CFLAGS=-Wall
 
 
@@ -13,7 +13,7 @@ all : $(OUTPUT)
 $(OUTPUT): $(OBJS)
 	$(CC) -o $(OUTPUT) $(OBJS) $(LIB) $(LIBNAME)
 
-%.o: %.c ../include/JH_SEARCH.h
+%.o: %.c ../include/JH_SEARCH.h ../include/YB_SCRIPT.h
 	$(CC) -c $(CFLAGS) $< $(INCLUDE) -o $@
 
 clean:
