@@ -12,7 +12,7 @@
 #define SUCCESS 1
 #define FAIL 0
 
-char buffer[255];
+char buffer[1024];
 
 char* parseObjectName(char ** pHeaderName,int headerCnt,int flag){
     char temp[255];
@@ -46,7 +46,7 @@ char* parseObjectName(char ** pHeaderName,int headerCnt,int flag){
 }
 
 
-int ScriptMakefile(char* path){
+int ScriptMakefile(char* Wpath){
     int returnValue = FAIL;
     int headerNameIndex = 0;
     int cFileNameIndex = 0;
@@ -69,47 +69,58 @@ int ScriptMakefile(char* path){
     char* srcHeaderName[255];
     
     char srcPath[255];
-    char includePath[255];
+    char mainPath[255];
     char libPath[255];
+    char depFile[255];
     
-    srtcat(srcPath,"/src/Makefile");
-    srtcat(includePath,"/include/Makefile");
-    strcat(libPath,"/lib/Makefile");
-    tempPtr = path;
-    strcat(path,"Makefile");
+    char oSrcPath[300];
+    char oLibPath[300];
+    
+    printf("%s\n",Wpath);
+    
+    sprintf(oSrcPath,"%s/src",Wpath);
+    sprintf(oLibPath,"%s/lib",Wpath);
+    
+    
+    sprintf(srcPath,"%s/src/Makefile",Wpath);
+    sprintf(libPath,"%s/lib/Makefile",Wpath);
+    sprintf(mainPath,"%s/Makefile",Wpath);
+    sprintf(depFile,"%s/dependencies.txt",Wpath);
+    printf("now start\n");
     if ( ( pMainMakeFile = fopen(srcPath,"w") ) == NULL ){
         perror("cannot create Main Makefile\n");
         exit(1);
     }
     
     if ( ( pMakeFile = fopen(libPath,"w") ) == NULL ){
-        perror("cannot create Makefile\n");
+        perror("cannot create lib Makefile\n");
         exit(1);
     }
     
-    if( (pWholeMakeFile = fopen(path,"w")) == NULL ){
-        perror("cannot create Makefile\n");
+    if( (pWholeMakeFile = fopen(mainPath,"w")) == NULL ){
+        perror("cannot create Whole Makefile\n");
         exit(1);
     }
     
-    if ( ( pPrototype = fopen(tempPtr,"r") ) == NULL ){
+    if ( ( pPrototype = fopen(depFile,"r") ) == NULL ){
         tempPtr = NULL;
         perror("cannot find prototype file");
     }
     else{
         //initialize buffer
         memset(buffer,0,sizeof(buffer)*sizeof(char));
-        
+        printf("read dependencies...\n");
         //read string from file
         while(fgets(buffer,(int)sizeof(buffer),pPrototype)){
+            printf("%s\n",buffer);
             if(buffer[strlen(buffer)-1] == '\n'){
-                buffer[strlen(buffer)-1] = '\0';
+               buffer[strlen(buffer)-1] = '\0';
             }
             tempPtr = buffer;
             strtok(tempPtr,",");
             path = tempPtr;
-            //printf("path : %s\n",path);
-            if (strcmp(path,"src")==0){
+            printf("path : %s\n",path);
+            if (strcmp(path,oSrcPath)==0){
                 tempPtr = strtok(NULL,",");
                 cFileName[cFileNameIndex++] = tempPtr;
                 while( (tempPtr = strtok(NULL,",")) != NULL ){
@@ -173,3 +184,7 @@ int ScriptMakefile(char* path){
     returnValue = SUCCESS;
     return returnValue;
 }
+/*
+int main(){
+    ScriptMakefile("/Users/jeong-yeongbin/Workspace/Course/SWProjects");
+}*/

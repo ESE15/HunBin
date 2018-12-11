@@ -31,7 +31,7 @@ int main(int argc, char *argv[]){
 		}
 	}
 
-    ScriptMakefile();
+    ScriptMakefile(path);
 
 	return 0;
 }
