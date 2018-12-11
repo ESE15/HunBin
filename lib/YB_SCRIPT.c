@@ -46,7 +46,7 @@ char* parseObjectName(char ** pHeaderName,int headerCnt,int flag){
 }
 
 
-int ScriptMakefile( void ){
+int ScriptMakefile(char* path){
     int returnValue = FAIL;
     int headerNameIndex = 0;
     int cFileNameIndex = 0;
@@ -68,22 +68,32 @@ int ScriptMakefile( void ){
     char libNameMacroTmp[255];
     char* srcHeaderName[255];
     
-    if ( ( pMainMakeFile = fopen(MainMakeFileName,"w") ) == NULL ){
+    char srcPath[255];
+    char includePath[255];
+    char libPath[255];
+    
+    srtcat(srcPath,"/src/Makefile");
+    srtcat(includePath,"/include/Makefile");
+    strcat(libPath,"/lib/Makefile");
+    tempPtr = path;
+    strcat(path,"Makefile");
+    if ( ( pMainMakeFile = fopen(srcPath,"w") ) == NULL ){
         perror("cannot create Main Makefile\n");
         exit(1);
     }
     
-    if ( ( pMakeFile = fopen(MakeFileName,"w") ) == NULL ){
+    if ( ( pMakeFile = fopen(libPath,"w") ) == NULL ){
         perror("cannot create Makefile\n");
         exit(1);
     }
     
-    if( (pWholeMakeFile = fopen(WholeMakeFileName,"w")) == NULL ){
+    if( (pWholeMakeFile = fopen(path,"w")) == NULL ){
         perror("cannot create Makefile\n");
         exit(1);
     }
     
-    if ( ( pPrototype = fopen(prototypeFileName,"r") ) == NULL ){
+    if ( ( pPrototype = fopen(tempPtr,"r") ) == NULL ){
+        tempPtr = NULL;
         perror("cannot find prototype file");
     }
     else{
