@@ -4,7 +4,7 @@
 //#include "YB_SCRIPT.h"
 
 #define aFileName "libmyfuncs.a"
-#define prototypeFileName "../prototype.txt"
+#define prototypeFileName "../dependencies.txt"
 #define MakeFileName "Makefile"
 #define MainMakeFileName "../src/Makefile"
 #define WholeMakeFileName "../Makefile"
@@ -92,6 +92,9 @@ int ScriptMakefile( void ){
         
         //read string from file
         while(fgets(buffer,(int)sizeof(buffer),pPrototype)){
+            if(buffer[strlen(buffer)-1] == '\n'){
+                buffer[strlen(buffer)-1] = '\0';
+            }
             tempPtr = buffer;
             strtok(tempPtr,",");
             path = tempPtr;
@@ -100,7 +103,8 @@ int ScriptMakefile( void ){
                 tempPtr = strtok(NULL,",");
                 cFileName[cFileNameIndex++] = tempPtr;
                 while( (tempPtr = strtok(NULL,",")) != NULL ){
-                    srcHeaderName[srcHeaderNameIndex] = tempPtr;
+                    srcHeaderName[srcHeaderNameIndex] = malloc(strlen(tempPtr));
+                    strcpy(srcHeaderName[srcHeaderNameIndex],tempPtr);
                     srcHeaderNameIndex++;
                     //printf("src dir headerfile : %s\n",tempPtr);
                 }
@@ -110,29 +114,26 @@ int ScriptMakefile( void ){
                 cFileName[cFileNameIndex] = tempPtr;
                 cFileNameIndex++;
                 while( (tempPtr = strtok(NULL,",")) != NULL ){
-                    headerName[headerNameIndex] = tempPtr;
+                    headerName[headerNameIndex] = malloc(strlen(tempPtr));
+                    strcpy(headerName[headerNameIndex],tempPtr);
                     headerNameIndex++;
+                    //printf("lib headername : %s\n",headerName[headerNameIndex-1]);
                 }
             }
         }
     }
-    
-    
-    
+
     memcpy(tempHeaderName,headerName,sizeof(char*)*255);
     Headerlist = parseObjectName(tempHeaderName,headerNameIndex,0);
     /* script main Makefile*/
-    fputs("CC=gcc\nINCLUDE=-I../include\nLIB=-L../lib\nLIBNAME=-lmyfunc\nOBJS=main.o\nOUTPUT=main\nCFLAGS=-Wall\nHEADERS=",pMainMakeFile);
+    fputs("CC=gcc\nINCLUDE=-I../include\nLIB=-L../lib\nLIBNAME=-lmyfuncs\nOBJS=main.o\nOUTPUT=main\nCFLAGS=-Wall\nHEADERS=",pMainMakeFile);
     
     fputs(Headerlist,pMainMakeFile);
     fputs("\n\n",pMainMakeFile);
           
-    fputs("all : $(OUTPUT)\n\n$(OUTPUT):$(OBJS)\n\t$(CC) -o $(OUTPUT) $(OBJS) $(LIB) -lmyfuncs\n\n%.o: %.c",pMainMakeFile);
+    fputs("all : $(OUTPUT)\n\n$(OUTPUT):$(OBJS)\n\t$(CC) -o $(OUTPUT) $(OBJS) $(LIB) -lmyfuncs\n\n%.o: %.c ",pMainMakeFile);
     
     for (int i = 0;i<headerNameIndex; i++){
-        if ( i == headerNameIndex-1){
-            headerName[i][strlen(headerName[i])-1] = '\0';
-        }
         fprintf(pMainMakeFile,"../include/%s ",headerName[i]);
     }
     for (int i = 0; i < srcHeaderNameIndex; i++){
@@ -146,10 +147,11 @@ int ScriptMakefile( void ){
     /* script whole Makefile*/
     fputs("DIRS=lib src\n.PHONY: all clean\nMAKE=make\nall:\n\t@for d in $(DIRS);\\\n\tdo\\\n\t\t$(MAKE) -C $$d;\\\n\tdone\n\nclean:\n\t@for d in $(DIRS);\\\n\tdo\\\n\t\t$(MAKE) -C $$d clean;\\\n\tdone",pWholeMakeFile);
     
+    
     memcpy(tempHeaderName,headerName,sizeof(char*)*255);
     parseObjectName(tempHeaderName,headerNameIndex,1);
     /* script lib Makefile*/
-    fputs("CC=gcc\nCFLAGS=-Wall\nOUTPUT=libmyfunc.a\nINCLUDE=-I../include\n",pMakeFile);
+    fputs("CC=gcc\nCFLAGS=-Wall\nOUTPUT=libmyfuncs.a\nINCLUDE=-I../include\n",pMakeFile);
     fprintf(pMakeFile,"OBJS=%s\n",tempHeaderName[0]);
     fputs("all : $(OBJS) $(OUTPUT)\n\n$(OUTPUT): $(OBJS)\n\tar rv $(OUTPUT) $(OBJS)\n\n",pMakeFile);
     fputs("%.o: %.c ../include/%.h\n\t$(CC) -c $(CFLAGS) $< $(INCLUDE) -o $@\n\n",pMakeFile);
@@ -160,9 +162,4 @@ int ScriptMakefile( void ){
     fclose(pMainMakeFile);
     returnValue = SUCCESS;
     return returnValue;
-}
-
-int main( void ){
-    ScriptMakefile();
-    return 0;
 }

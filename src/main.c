@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "JH_SEARCH.h"
-//#include "YB_SCRIPT.h"
+#include "YB_SCRIPT.h"
 
 int main(int argc, char *argv[]){
 
@@ -27,9 +27,7 @@ int main(int argc, char *argv[]){
 		}
 	}
 
-
-	// do script
-	// YB's code here
+    ScriptMakefile();
 
 	return 0;
 }
